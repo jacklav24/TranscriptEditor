@@ -2,7 +2,8 @@ import java.util.Scanner;
 
 
 
-public class Main {
+public class TranscriptEditorMain {
+    
     public static final int[] INDICATOR = {0,1};
     
     public static void main(String[] args) {
@@ -12,7 +13,10 @@ public class Main {
         Scanner scan = new Scanner(System.in);
         
         
-        System.out.println("Hi! Welcome to my transcript editor!\n");
+        System.out.println("Hi! Welcome to my transcript editor/passage generator!\n");
+        
+        boolean isTranscript = (InputValidation.queryIntFromOptions(INDICATOR, scan, 
+                "Enter 1 if you want to input a transcript, and 0 if you want to enter simple text: ", "Enter 0 or 1: ")== 1) ? true : false;
         
         boolean files = (InputValidation.queryIntFromOptions(INDICATOR, scan, 
                 "Enter 1 if you want read from a file, and 0 if you want to paste text into the console: ", "Enter 0 or 1: ")== 1) ? true : false;
@@ -20,6 +24,8 @@ public class Main {
         
         boolean generateContent = (InputValidation.queryIntFromOptions(INDICATOR, scan, 
                 "Enter 1 if you want to generate a passage, and 0 if you want to simple return the edited text: ", "Enter 0 or 1: ")== 1) ? true : false;
+        
+
         
         
         if (generateContent) {
@@ -62,16 +68,20 @@ public class Main {
             
             String current = TranscriptEditor.readStringInput(scan);
             
+            if (isTranscript) {
+                current  = TranscriptEditor.removeTimes(current);
+                System.out.println();
+                System.out.println("Tokenizing!");
+                System.out.println();
+                
+            }
             
-            current  = TranscriptEditor.removeTimes(current);
-            System.out.println();
-            System.out.println("Tokenizing!");
-            System.out.println();
             Object[] tokenizedInput = TranscriptEditor.tokenizeString(current);
-            
             System.out.println("Here's your cleaned Transcript!");
             System.out.println(TranscriptEditor.returnStuff(tokenizedInput));
+            
         }
+        
         
         
         scan.close();
