@@ -1,4 +1,3 @@
-packa
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -23,7 +22,7 @@ import java.util.regex.Pattern;
  * 
  * @author Stephanie Valentine and Jack LaVergne
  */
-public class NovelGenerator {
+public class PassageGenerator {
     
     private static Map<String, List<String>> model;
 
@@ -177,6 +176,20 @@ public class NovelGenerator {
         trainModel(tokens, length);
     }
     
+    public static void learnFromString(String words, int length) {
+        List<String> tokens = tokenizeString(words);
+        if (tokens.size() < length) {
+            return;
+        }
+        // add elements to account for fencposting and lengths. Must be length * 2 to account for if
+        addDuplicateElements(tokens, length);
+        // return results in lengths k.
+        tokens = getSequencesStringList(tokens, length);
+        
+       
+        trainModel(tokens, length);
+    }
+    
     /**
      * puts together a list of string sequences of length k.
      * 
@@ -231,10 +244,7 @@ public class NovelGenerator {
      * @param length a requested minimum number of tokens of the auto-generated novel
      * @return an auto-generated novel
      */
-    public static String generateNovel(int size, int length) {
-        
-        
-        
+    public static String generatePassage(int size, int length) {
         
 
         // instantiate stringBuilder
@@ -305,20 +315,55 @@ public class NovelGenerator {
         
         return valueOptions.get(option);
     }
+    
+    public static void getFiles(Scanner scan, int size) {
+        
+
+        System.out.println("Now enter your filenames in the format './filename.txt', enter '-999' to stop:");
+
+        while (true) {
+            System.out.print("Enter filename: ");
+            String filename = scan.nextLine();
+
+            if (filename.equals("-999")) {
+                break;
+            }
+
+            // Validating the format
+            if (!filename.matches("^\\.\\/\\w+\\.txt$")) {
+                System.out.println("Invalid filename format. Please enter in the format './filename.txt'");
+                continue;
+            }
+            learnFromFile(filename, size);
+        }
+
+    }
+    
+    public static void getStrings(Scanner scan, int size) {
+        StringBuilder sb = new StringBuilder();
+        System.out.println("Type in or paste your text. Type -999 followed by a new line to stop!");
+        while (true) {
+            String input = scan.nextLine();
+            if (input.equals("-999")) {
+                break;
+            }
+            // Do something with the input if needed
+            sb.append(input);
+        }
+        
+        
+        learnFromString(sb.toString(), size);
+    }
 
     /**
      * Main function that reads files, generates models, etc.
      * 
      * @param args does not accept any args.
      */
-    public static void main(String[] args) {
+    public static void overallPassage(Scanner scan) {
         
-        Scanner scan = new Scanner(System.in);
-        
-       
-        
-        
-        int size = InputValidation.queryInt(scan, "How many words per key? : ", "Enter a valid int.");
+        int size = InputValidation.queryInt(scan, "How many words per key? That is, how many words in a row"
+                + " should the model use to train? : ", "Enter a valid int.");
         
         while (!(size > 0)) { // ensure size is not negative
             size = InputValidation.queryInt(scan, "Enter a positive integer: ", "Enter a valid int.");
@@ -331,19 +376,14 @@ public class NovelGenerator {
                     "Enter a valid int");
         }
         
-        learnFromFile("./Tell-Tale.txt", size);
-        learnFromFile("./Pooh.txt", size);
-        learnFromFile("./Trump.txt", size);
-        learnFromFile("./Biden.txt", size);
-        learnFromFile("./French.txt", size);
-
+       
         // get novel in style of writer.
-        String novel = generateNovel(length, size);
-        if (novel == null) {
-            System.out.println("Oops, your novel couldn't be generated!!");
+        String passage = generatePassage(length, size);
+        if (passage == null) {
+            System.out.println("Oops, your passage couldn't be printed!!");
         }
         else {
-            System.out.println(novel);
+            System.out.println(passage);
         }
         
         

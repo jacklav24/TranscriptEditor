@@ -50,38 +50,22 @@ public class TranscriptEditor {
         
     }
     
-    /**
-     * Reads and returns all contents of a file.
-     * 
-     * @param filepath the filepath (including the filename) of the file to read
-     * @return a string containing all contents of the file
-     */
-    public static String readFile(String filepath) {
-        File f = new File(filepath);        
-        Scanner scan = null;
-        try { // attempt to open the file
-            scan = new Scanner(f);
-            StringBuilder sb = new StringBuilder();
-
-            while (scan.hasNext()) { // while the file has more words append to the string builder
-                sb.append(scan.next());
-                sb.append(' '); // adding a space to separate words
+    public static String readStringInput(Scanner scan) {
+        StringBuilder sb = new StringBuilder();
+        
+        System.out.println("Type in or past your text. Type -999 followed by a new line to stop!");
+        while (true) {
+            String input = scan.nextLine();
+            if (input.equals("-999")) {
+                break;
             }
-            // get string array with a single word per index
-            // List<String> temp = tokenizeString(sb.toString());
-            // return string array made into k length sequences of words at each index
-            return sb.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(0);
+            // Do something with the input if needed
+            sb.append(input);
+            
         }
-
-        finally {
-            scan.close(); // close scanner
-        }
-
-        return null;
+        return sb.toString();
     }
+    
     
     /**
      * Accepts a string and returns an array of the words in that string. The words
@@ -118,11 +102,11 @@ public class TranscriptEditor {
         int index;
         if (matcher.find()) {
             index = matcher.end();
-            return input.substring(index);
+            return input.substring(index) + "\n";
         }
         else if (matcher2.find()) {
             index = matcher2.end();
-            return input.substring(index);
+            return input.substring(index) + "\n";
         }
         return input;
     }
